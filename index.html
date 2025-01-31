@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Управление ботом</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #console {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      width: 600px;
+      height: 400px;
+      overflow-y: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    #output {
+      white-space: pre-wrap;
+    }
+    #input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #444;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div id="console">
+    <div id="output">Добро пожаловать! Введите команду для управления ботом.</div>
+    <input type="text" id="input" placeholder="Введите команду (например, /start, /stop, /attack, /stopattack)">
+  </div>
+
+  <script>
+    // Подключаемся к WebSocket-серверу
+    const ws = new WebSocket('ws://ваш_внешний_IP:3000');
+
+    // Элементы интерфейса
+    const output = document.getElementById('output');
+    const input = document.getElementById('input');
+
+    // Обработка входящих сообщений от сервера
+    ws.onmessage = (event) => {
+      const message = document.createElement('div');
+      message.textContent = event.data;
+      output.appendChild(message);
+      output.scrollTop = output.scrollHeight; // Автопрокрутка
+    };
+
+    // Обработка ввода команды
+    input.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        const command = input.value.trim();
+        if (command) {
+          ws.send(command); // Отправляем команду на сервер
+          input.value = ''; // Очищаем поле ввода
+        }
+      }
+    });
+
+    // Обработка ошибок WebSocket
+    ws.onerror = (error) => {
+      console.error('Ошибка WebSocket:', error);
+      output.innerHTML += '<div style="color: red;">Ошибка подключения к серверу.</div>';
+    };
+
+    // Обработка закрытия соединения
+    ws.onclose = () => {
+      output.innerHTML += '<div style="color: red;">Соединение с сервером закрыто.</div>';
+    };
+  </script>
+</body>
+</html>
