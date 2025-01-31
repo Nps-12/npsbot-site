@@ -60,20 +60,4 @@
 
   <script>
     // Подключаемся к WebSocket-серверу
-    const ws = new WebSocket('ws://ваш_внешний_IP:3000');
-
-    // Элементы интерфейса
-    const output = document.getElementById('output');
-    const input = document.getElementById('input');
-
-    // Обработка входящих сообщений от сервера
-    ws.onmessage = (event) => {
-      const message = document.createElement('div');
-      message.textContent = event.data;
-      output.appendChild(message);
-      output.scrollTop = output.scrollHeight; // Автопрокрутка
-    };
-
-    // Функция для отправки команды
-    function sendCommand() {
-      const command = input.value.trim
+    const ws = new WebSocket('ws://ваш_внешний
