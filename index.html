@@ -60,4 +60,46 @@
 
   <script>
     // Подключаемся к WebSocket-серверу
-    const ws = new WebSocket('ws://ваш_внешний
+    const ws = new WebSocket('ws://ваш_внешний_IP:3000');
+
+    // Элементы интерфейса
+    const output = document.getElementById('output');
+    const input = document.getElementById('input');
+
+    // Обработка входящих сообщений от сервера
+    ws.onmessage = (event) => {
+      const message = document.createElement('div');
+      message.textContent = event.data;
+      output.appendChild(message);
+      output.scrollTop = output.scrollHeight; // Автопрокрутка
+    };
+
+    // Функция для отправки команды
+    function sendCommand() {
+      const command = input.value.trim();
+      if (command) {
+        ws.send(command); // Отправляем команду на сервер
+        input.value = ''; // Очищаем поле ввода
+      }
+    }
+
+    // Обработка нажатия клавиши Enter
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        sendCommand(); // Отправляем команду при нажатии Enter
+      }
+    });
+
+    // Обработка ошибок WebSocket
+    ws.onerror = (error) => {
+      console.error('Ошибка WebSocket:', error);
+      output.innerHTML += '<div style="color: red;">Ошибка подключения к серверу.</div>';
+    };
+
+    // Обработка закрытия соединения
+    ws.onclose = () => {
+      output.innerHTML += '<div style="color: red;">Соединение с сервером закрыто.</div>';
+    };
+  </script>
+</body>
+</html>
